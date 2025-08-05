@@ -58,8 +58,8 @@ public class playerScript : MonoBehaviour
     {
         if (collision.gameObject.tag == "Pildora")
         {
-            puntuacion++;
             Destroy(collision.gameObject);
+            puntuacion++;
             PuntuacionGameplay.text = "Puntos: " + puntuacion;
         }
     }
