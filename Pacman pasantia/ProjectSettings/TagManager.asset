@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Pildora
+  - Wall
   layers:
   - Default
   - TransparentFX

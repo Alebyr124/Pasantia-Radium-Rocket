@@ -17,11 +17,11 @@ public class playerScript : MonoBehaviour
     public Transform cam;
 
     private float rotationX;
-    private float rotationY;
-
     private Rigidbody rb;
 
     public Transform spawnPoint;
+
+    private UIManager uiManager;
 
     void Start()
     {
@@ -29,34 +29,45 @@ public class playerScript : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         transform.position = spawnPoint.position;
+
+        uiManager = UIManager.inst; // Guardar referencia para evitar buscar siempre
     }
 
     void Update()
     {
-        if (!UIManager.inst.Win)
+        if (!uiManager.Win)
         {
-            float x = Input.GetAxis("Horizontal");
-            float y = Input.GetAxis("Vertical");
-
-
-            transform.Translate(new Vector3(x, 0, y) * Time.deltaTime * speed);
-
             rotationX -= Input.GetAxis("Mouse Y") * mouseSensitivity;
             rotationX = Mathf.Clamp(rotationX, -limitX, limitX);
             cam.localRotation = Quaternion.Euler(rotationX, 0, 0);
             transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * mouseSensitivity, 0);
-            rb = GetComponent<Rigidbody>();
 
             if (puntuacion >= 10)
             {
-                UIManager.inst.ShowWinScreen();
+                uiManager.ShowWinScreen();
+
+                // Liberar cursor si quieres:
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
             }
+        }
+    }
+
+    void FixedUpdate()
+    {
+        if (!uiManager.Win)
+        {
+            float x = Input.GetAxis("Horizontal");
+            float y = Input.GetAxis("Vertical");
+
+            Vector3 movement = new Vector3(x, 0, y) * speed * Time.fixedDeltaTime;
+            rb.MovePosition(transform.position + transform.TransformDirection(movement));
         }
     }
 
     public void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.tag == "Pildora")
+        if (collision.gameObject.CompareTag("Pildora"))
         {
             Destroy(collision.gameObject);
             puntuacion++;
@@ -64,6 +75,3 @@ public class playerScript : MonoBehaviour
         }
     }
 }
-
-
-
