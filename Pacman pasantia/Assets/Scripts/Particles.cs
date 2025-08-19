@@ -3,17 +3,21 @@ using UnityEngine;
 public class Particles : MonoBehaviour
 {
     public GameObject dustEffectPrefab;
+    public float cooldown = 0.5f;
+    private float lastTime = 0f;
 
-    void OnTriggerEnter(Collider other)
+    void OnCollisionEnter(Collision collision)
     {
-        if (other.CompareTag("Wall"))
+        if (collision.gameObject.CompareTag("Wall") && Time.time - lastTime > cooldown)
         {
-            Debug.Log("Entró en el trigger de la pared: " + other.name);
-            Instantiate(
+            lastTime = Time.time;
+
+            GameObject dust = Instantiate(
                 dustEffectPrefab,
-                other.ClosestPoint(transform.position),
+                collision.contacts[0].point,
                 Quaternion.identity
             );
+            Destroy(dust, 2f);
         }
     }
 }
