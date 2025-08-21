@@ -6,8 +6,10 @@ public class Particles : MonoBehaviour
     public float cooldown = 0.5f;
     private float lastTime = 0f;
 
-    // Distancia delante del jugador  
+     
     public float offsetDistance = 1f;
+
+    public AudioSource WallSound;
 
     void OnCollisionEnter(Collision collision)
     {
@@ -15,10 +17,11 @@ public class Particles : MonoBehaviour
         {
             lastTime = Time.time;
 
-            // Posición al frente del jugador
+            WallSound.Play();
+
             Vector3 spawnPos = transform.position + transform.forward * offsetDistance;
 
-            // Rotar el efecto hacia adelante
+            
             Quaternion spawnRot = Quaternion.LookRotation(transform.forward);
 
             GameObject dust = Instantiate(dustEffectPrefab, spawnPos, spawnRot);

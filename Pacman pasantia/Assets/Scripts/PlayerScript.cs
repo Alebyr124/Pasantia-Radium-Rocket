@@ -23,6 +23,8 @@ public class playerScript : MonoBehaviour
 
     private UIManager uiManager;
 
+    public AudioSource PildoraSound;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -30,7 +32,7 @@ public class playerScript : MonoBehaviour
         Cursor.visible = false;
         transform.position = spawnPoint.position;
 
-        uiManager = UIManager.inst; // Guardar referencia para evitar buscar siempre
+        uiManager = UIManager.inst;
     }
 
     void Update()
@@ -46,7 +48,6 @@ public class playerScript : MonoBehaviour
             {
                 uiManager.ShowWinScreen();
 
-                // Liberar cursor si quieres:
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
             }
@@ -69,6 +70,7 @@ public class playerScript : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Pildora"))
         {
+            PildoraSound.Play();
             Destroy(collision.gameObject);
             puntuacion++;
             PuntuacionGameplay.text = "Puntos: " + puntuacion;

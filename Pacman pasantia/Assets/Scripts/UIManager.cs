@@ -10,6 +10,9 @@ public class UIManager : MonoBehaviour
     public static UIManager inst;
     public GameObject WinScreen;
 
+    public AudioSource GameplayMusic;
+    public AudioSource WinMusic;
+
     public TextMeshProUGUI TimeGameplay;
     public TextMeshProUGUI TimeWin;
     public TextMeshProUGUI PuntuacionGameplay;
@@ -58,6 +61,8 @@ public class UIManager : MonoBehaviour
             TimeWin.text = "Tu tiempo fue de " + TimeMinutes + ":" + Mathf.Ceil(TimeSeconds);
         TimeGameplay.gameObject.SetActive(false);
         PuntuacionGameplay.gameObject.SetActive(false);
+        GameplayMusic.Pause();
+        WinMusic.Play();
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
