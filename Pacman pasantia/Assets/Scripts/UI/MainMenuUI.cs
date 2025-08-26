@@ -9,7 +9,9 @@ using TMPro;
 public class MainMenuUI : MonoBehaviour
 {
     public Button PlayButton;
+    
     public Button ExitButton;
+
 
     private void Awake()
     {

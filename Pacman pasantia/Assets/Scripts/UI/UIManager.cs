@@ -9,6 +9,9 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager inst;
     public GameObject WinScreen;
+    public GameObject PauseScreen;
+
+    public bool Pause;
 
     public AudioSource GameplayMusic;
     public AudioSource WinMusic;
@@ -16,7 +19,12 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI TimeGameplay;
     public TextMeshProUGUI TimeWin;
     public TextMeshProUGUI PuntuacionGameplay;
+
     public Button RestartButton;
+    public Button MenuButton;
+    public Button PauseResumeButton;
+    public Button PauseRestartButton;
+    public Button PauseMenuButton;
 
     public bool Win = false;
 
@@ -31,11 +39,37 @@ public class UIManager : MonoBehaviour
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         });
+
+        MenuButton.onClick.AddListener(() =>
+        {
+            SceneManager.LoadScene(1);
+        });
+
+        PauseRestartButton.onClick.AddListener(() =>
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        });
+
+        PauseMenuButton.onClick.AddListener(() =>
+        {
+            SceneManager.LoadScene(1);
+        });
+
+        PauseResumeButton.onClick.AddListener(() =>
+        {
+            Pause = false;
+            PauseScreen.SetActive(false);
+            TimeGameplay.gameObject.SetActive(true);
+            PuntuacionGameplay.gameObject.SetActive(true);
+            GameplayMusic.Play();
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        });
     }
 
     private void Update()
     {
-        if (!Win)
+        if (!Win && !Pause)
         {
             TimeSeconds += Time.deltaTime;
             if (TimeSeconds >= 59f)
@@ -63,6 +97,16 @@ public class UIManager : MonoBehaviour
         PuntuacionGameplay.gameObject.SetActive(false);
         GameplayMusic.Pause();
         WinMusic.Play();
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+    public void ShowPauseScreen()
+    {
+        Pause = true;
+        PauseScreen.SetActive(true);
+        TimeGameplay.gameObject.SetActive(false);
+        PuntuacionGameplay.gameObject.SetActive(false);
+        GameplayMusic.Pause();
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }

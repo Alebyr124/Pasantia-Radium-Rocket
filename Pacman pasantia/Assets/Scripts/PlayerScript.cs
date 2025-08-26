@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using UnityEngine;
 using TMPro;
 
-public class playerScript : MonoBehaviour
+public class PlayerScript : MonoBehaviour
 {
     public int puntuacion = 0;
     public TextMeshProUGUI PuntuacionGameplay;
@@ -37,7 +37,7 @@ public class playerScript : MonoBehaviour
 
     void Update()
     {
-        if (!uiManager.Win)
+        if (!uiManager.Win && !uiManager.Pause)
         {
             rotationX -= Input.GetAxis("Mouse Y") * mouseSensitivity;
             rotationX = Mathf.Clamp(rotationX, -limitX, limitX);
@@ -51,17 +51,23 @@ public class playerScript : MonoBehaviour
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
             }
+
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                uiManager.ShowPauseScreen();
+            }
         }
     }
 
     void FixedUpdate()
     {
-        if (!uiManager.Win)
+        if (!uiManager.Win && !uiManager.Pause)
         {
             float x = Input.GetAxis("Horizontal");
             float y = Input.GetAxis("Vertical");
 
-            Vector3 movement = new Vector3(x, 0, y) * speed * Time.fixedDeltaTime;
+            Vector3 input = new Vector3(x, 0, y).normalized;
+            Vector3 movement = input * speed * Time.fixedDeltaTime;
             rb.MovePosition(transform.position + transform.TransformDirection(movement));
         }
     }
