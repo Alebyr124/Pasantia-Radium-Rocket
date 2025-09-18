@@ -9,22 +9,27 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager inst;
     public GameObject WinScreen;
+    public GameObject LoseScreen;
     public GameObject PauseScreen;
 
     public bool Pause;
 
     public AudioSource GameplayMusic;
     public AudioSource WinMusic;
+    public AudioSource LoseMusic;
 
     public TextMeshProUGUI TimeGameplay;
     public TextMeshProUGUI TimeWin;
     public TextMeshProUGUI PuntuacionGameplay;
+    public TextMeshProUGUI TimeLose;
 
     public Button RestartButton;
     public Button MenuButton;
     public Button PauseResumeButton;
     public Button PauseRestartButton;
     public Button PauseMenuButton;
+    public Button LoseRestartButton;
+    public Button LoseExitButton;
 
     public bool Win = false;
 
@@ -65,6 +70,16 @@ public class UIManager : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         });
+
+        LoseRestartButton.onClick.AddListener(() =>
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        });
+
+        LoseExitButton.onClick.AddListener(() =>
+        {
+            SceneManager.LoadScene(1);
+        });
     }
 
     private void Update()
@@ -100,6 +115,26 @@ public class UIManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
+
+    public void ShowLoseScreen()
+    {
+        Win = true;
+        LoseScreen.SetActive(true);
+
+        if (TimeSeconds <= 9)
+            TimeLose.text = "Sobreviviste " + TimeMinutes + ":0" + Mathf.Ceil(TimeSeconds) + "segundos";
+        else
+            TimeLose.text = "Sobreviviste " + TimeMinutes + ":" + Mathf.Ceil(TimeSeconds) + "segundos";
+
+        TimeGameplay.gameObject.SetActive(false);
+        PuntuacionGameplay.gameObject.SetActive(false);
+        GameplayMusic.Pause();
+        LoseMusic.Play();
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+
     public void ShowPauseScreen()
     {
         Pause = true;

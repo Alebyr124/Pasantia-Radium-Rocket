@@ -7,6 +7,9 @@ using TMPro;
 
 public class PlayerScript : MonoBehaviour
 {
+    public int vidas = 3;
+    public TextMeshProUGUI VidasGameplay;
+
     public int puntuacion = 0;
     public TextMeshProUGUI PuntuacionGameplay;
 
@@ -24,6 +27,9 @@ public class PlayerScript : MonoBehaviour
     private UIManager uiManager;
 
     public AudioSource PildoraSound;
+
+    private bool canTakeDamage = true;  
+    public float damageCooldown = 5f;
 
     void Start()
     {
@@ -81,5 +87,36 @@ public class PlayerScript : MonoBehaviour
             puntuacion++;
             PuntuacionGameplay.text = "Puntos: " + puntuacion;
         }
+
+        if (collision.gameObject.CompareTag("Enemigo"))
+        {
+            
+            TakeDamage(1);  
+        }
+    }
+
+    public void TakeDamage(int damage)
+    {
+        if (canTakeDamage)
+        {
+            Debug.Log("perdiste 1 vida");
+            vidas -= damage;
+            if (VidasGameplay != null)
+                VidasGameplay.text = "Vidas: " + vidas;  
+
+            if (vidas <= 0)
+            {
+                uiManager.ShowLoseScreen();
+            }
+
+            canTakeDamage = false;
+            StartCoroutine(DamageCooldown());
+        }
+    }
+
+    private IEnumerator DamageCooldown()
+    {
+        yield return new WaitForSeconds(damageCooldown);
+        canTakeDamage = true;
     }
 }

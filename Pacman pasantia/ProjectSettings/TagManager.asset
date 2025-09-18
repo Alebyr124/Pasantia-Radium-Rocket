@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Pildora
   - Wall
+  - Enemigo
   layers:
   - Default
   - TransparentFX
