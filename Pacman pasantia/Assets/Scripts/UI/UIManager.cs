@@ -122,9 +122,9 @@ public class UIManager : MonoBehaviour
         LoseScreen.SetActive(true);
 
         if (TimeSeconds <= 9)
-            TimeLose.text = "Sobreviviste " + TimeMinutes + ":0" + Mathf.Ceil(TimeSeconds) + "segundos";
+            TimeLose.text = "Sobreviviste " + TimeMinutes + ":0" + Mathf.Ceil(TimeSeconds) + " segundos";
         else
-            TimeLose.text = "Sobreviviste " + TimeMinutes + ":" + Mathf.Ceil(TimeSeconds) + "segundos";
+            TimeLose.text = "Sobreviviste " + TimeMinutes + ":" + Mathf.Ceil(TimeSeconds) + " segundos";
 
         TimeGameplay.gameObject.SetActive(false);
         PuntuacionGameplay.gameObject.SetActive(false);
