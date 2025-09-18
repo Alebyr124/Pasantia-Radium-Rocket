@@ -4997,6 +4997,7 @@ MonoBehaviour:
   VidasGameplay: {fileID: 0}
   puntuacion: 0
   PuntuacionGameplay: {fileID: 60126533}
+  vidas: 3
   speed: 8
   mouseSensitivity: 2
   limitX: 45
