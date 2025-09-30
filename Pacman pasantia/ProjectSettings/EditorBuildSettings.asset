@@ -17,7 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/NIvel 2.unity
     guid: 1c12f8d49f00efe4aaefeccbd77bb6b4
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Loss.unity
     guid: 09ce6e3be07f7b445b6204fc2b92b360
   m_configObjects: {}
