@@ -31,19 +31,19 @@ public class EnemyIA : MonoBehaviour
 
     private void Update()
     {
-        switch (currentState)
-        {
-            case EnemyState.Patrol:
-                Patrol();
-                if (PlayerInRange())
-                    currentState = EnemyState.Chase;
-                break;
+        if (!UIManager.inst.Pause && !UIManager.inst.Win) { 
+            switch (currentState)
+            {
+                case EnemyState.Patrol:
+                    Patrol();
+                    if (PlayerInRange()) currentState = EnemyState.Chase;
+                    break;
 
-            case EnemyState.Chase:
-                Chase();
-                if (!PlayerInRange())
-                    currentState = EnemyState.Patrol;
-                break;
+                case EnemyState.Chase:
+                    Chase();
+                    if (!PlayerInRange()) currentState = EnemyState.Patrol;
+                    break;
+            }
         }
     }
 

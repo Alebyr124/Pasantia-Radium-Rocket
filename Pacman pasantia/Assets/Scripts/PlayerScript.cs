@@ -110,7 +110,6 @@ public class PlayerScript : MonoBehaviour
     {
         if (canTakeDamage)
         {
-            Debug.Log("Perdiste 1 vida");
             vidas -= damage;
 
 
