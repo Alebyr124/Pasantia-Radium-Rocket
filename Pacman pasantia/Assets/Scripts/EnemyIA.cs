@@ -31,17 +31,20 @@ public class EnemyIA : MonoBehaviour
 
     private void Update()
     {
-        if (!UIManager.inst.Pause && !UIManager.inst.Win) { 
+        if (!UIManager.inst.Pause && !UIManager.inst.Win)
+        {
             switch (currentState)
             {
                 case EnemyState.Patrol:
                     Patrol();
-                    if (PlayerInRange()) currentState = EnemyState.Chase;
+                    if (PlayerInRange())
+                        currentState = EnemyState.Chase;
                     break;
 
                 case EnemyState.Chase:
                     Chase();
-                    if (!PlayerInRange()) currentState = EnemyState.Patrol;
+                    if (!PlayerInRange())
+                        currentState = EnemyState.Patrol;
                     break;
             }
         }
@@ -49,7 +52,9 @@ public class EnemyIA : MonoBehaviour
 
     private void Patrol()
     {
-        if (Vector3.Distance(transform.position, agent.destination) < destinationDistance)
+        if (destinations.Length == 0) return;
+
+        if (!agent.pathPending && agent.remainingDistance < destinationDistance)
         {
             currentDestination = (currentDestination + 1) % destinations.Length;
             agent.SetDestination(destinations[currentDestination].position);
@@ -66,7 +71,7 @@ public class EnemyIA : MonoBehaviour
 
     private bool PlayerInRange()
     {
-        return Vector3.Distance(transform.position, player.transform.position) < followDistance;
+        return Vector3.Distance(agent.transform.position, player.transform.position) < followDistance;
     }
 
     private void OnDrawGizmosSelected()

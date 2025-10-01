@@ -28,10 +28,11 @@ public class PlayerScript : MonoBehaviour
 
     [Header("Audio")]
     public AudioSource PildoraSound;
+    public AudioSource DamageSound;
 
     [Header("Damage")]
     private bool canTakeDamage = true;
-    public float damageCooldown = 5f;
+    public float damageCooldown = 2f;
 
     void Start()
     {
@@ -103,6 +104,7 @@ public class PlayerScript : MonoBehaviour
         if (collision.gameObject.CompareTag("Enemigo"))
         {
             TakeDamage(1);
+            
         }
     }
 
@@ -111,7 +113,7 @@ public class PlayerScript : MonoBehaviour
         if (canTakeDamage)
         {
             vidas -= damage;
-
+            DamageSound.Play();
 
             if (VidasGameplay != null)
                 VidasGameplay.text = "Vidas: " + vidas;

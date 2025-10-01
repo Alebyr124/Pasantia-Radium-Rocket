@@ -42,27 +42,32 @@ public class UIManager : MonoBehaviour
 
         RestartButton.onClick.AddListener(() =>
         {
+            Time.timeScale = 1;
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         });
 
         MenuButton.onClick.AddListener(() =>
         {
+            Time.timeScale = 1;
             SceneManager.LoadScene(1);
         });
 
         PauseRestartButton.onClick.AddListener(() =>
         {
+            Time.timeScale = 1;
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         });
 
         PauseMenuButton.onClick.AddListener(() =>
         {
+            Time.timeScale = 1;
             SceneManager.LoadScene(1);
         });
 
         PauseResumeButton.onClick.AddListener(() =>
         {
             Pause = false;
+            Time.timeScale = 1;
             PauseScreen.SetActive(false);
             TimeGameplay.gameObject.SetActive(true);
             PuntuacionGameplay.gameObject.SetActive(true);
@@ -73,11 +78,13 @@ public class UIManager : MonoBehaviour
 
         LoseRestartButton.onClick.AddListener(() =>
         {
+            Time.timeScale = 1;
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         });
 
         LoseExitButton.onClick.AddListener(() =>
         {
+            Time.timeScale = 1;
             SceneManager.LoadScene(1);
         });
     }
@@ -103,6 +110,7 @@ public class UIManager : MonoBehaviour
     public void ShowWinScreen()
     {
         Win = true;
+        Time.timeScale = 1;
         WinScreen.SetActive(true);
         if (TimeSeconds <= 9)
             TimeWin.text = "Tu tiempo fue de " + TimeMinutes + ":0" + Mathf.Ceil(TimeSeconds);
@@ -114,11 +122,15 @@ public class UIManager : MonoBehaviour
         WinMusic.Play();
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+
+        SaveSystem saveSystem = FindObjectOfType<SaveSystem>();
+        saveSystem.CompleteCurrentLevel((TimeMinutes * 60) + Mathf.Ceil(TimeSeconds), FindObjectOfType<PlayerScript>().vidas);
     }
 
     public void ShowLoseScreen()
     {
         Win = true;
+        Time.timeScale = 1;
         LoseScreen.SetActive(true);
 
         if (TimeSeconds <= 9)
@@ -138,6 +150,7 @@ public class UIManager : MonoBehaviour
     public void ShowPauseScreen()
     {
         Pause = true;
+        Time.timeScale = 0;
         PauseScreen.SetActive(true);
         TimeGameplay.gameObject.SetActive(false);
         PuntuacionGameplay.gameObject.SetActive(false);
