@@ -110,7 +110,7 @@ public class UIManager : MonoBehaviour
     public void ShowWinScreen()
     {
         Win = true;
-        Time.timeScale = 1;
+        Time.timeScale = 0;
         WinScreen.SetActive(true);
         if (TimeSeconds <= 9)
             TimeWin.text = "Tu tiempo fue de " + TimeMinutes + ":0" + Mathf.Ceil(TimeSeconds);
@@ -130,7 +130,7 @@ public class UIManager : MonoBehaviour
     public void ShowLoseScreen()
     {
         Win = true;
-        Time.timeScale = 1;
+        Time.timeScale = 0;
         LoseScreen.SetActive(true);
 
         if (TimeSeconds <= 9)

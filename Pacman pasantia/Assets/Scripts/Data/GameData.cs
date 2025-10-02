@@ -13,7 +13,7 @@ public class LevelData
     {
         levelNumber = number;
         completed = false;
-        timeTaken = 0f;
+        timeTaken = 999999999999999f;
         livesLeft = 0;
     }
 }
@@ -26,7 +26,7 @@ public class GameData
     public GameData(int totalLevels)
     {
         levels = new List<LevelData>();
-        for (int i = 0; i < totalLevels; i++)
+        for (int i = 1; i <= totalLevels; i++)
         {
             levels.Add(new LevelData(i));
         }

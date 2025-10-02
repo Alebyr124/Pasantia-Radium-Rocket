@@ -14,6 +14,7 @@ public class SaveSystem : MonoBehaviour
         LoadGame();
     }
 
+
     public void SaveGame()
     {
         string json = JsonUtility.ToJson(gameData, true);
@@ -33,6 +34,7 @@ public class SaveSystem : MonoBehaviour
         {
             gameData = new GameData(totalLevels);
             Debug.Log("No se encontró guardado, creando nuevo");
+            SaveGame();
         }
     }
 

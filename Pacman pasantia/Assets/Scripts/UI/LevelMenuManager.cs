@@ -47,7 +47,7 @@ public class LevelMenuScript : MonoBehaviour
         if (data2 != null && data2.completed)
         {
             System.TimeSpan time = System.TimeSpan.FromSeconds(data2.timeTaken);
-            Level1DataText.text = $"Completado\nTiempo: {time.Minutes:D2}:{time.Seconds:D2}";
+            Level2DataText.text = $"Completado\nTiempo: {time.Minutes:D2}:{time.Seconds:D2}";
         }
         else
         {
