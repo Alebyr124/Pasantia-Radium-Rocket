@@ -14,7 +14,6 @@ public class SaveSystem : MonoBehaviour
         LoadGame();
     }
 
-
     public void SaveGame()
     {
         string json = JsonUtility.ToJson(gameData, true);
@@ -34,7 +33,7 @@ public class SaveSystem : MonoBehaviour
         {
             gameData = new GameData(totalLevels);
             Debug.Log("No se encontró guardado, creando nuevo");
-            SaveGame();
+            SaveGame(); // Guarda el archivo inicial
         }
     }
 
@@ -59,9 +58,27 @@ public class SaveSystem : MonoBehaviour
     public void CompleteCurrentLevel(float timeTaken, int livesLeft)
     {
         int nivelActual = SceneManager.GetActiveScene().buildIndex - 1;
-        if(GetLevelData(nivelActual).timeTaken > timeTaken)
+
+        Debug.Log("Build Index: " + SceneManager.GetActiveScene().buildIndex);
+        Debug.Log("Nivel calculado: " + nivelActual);
+
+        LevelData levelData = GetLevelData(nivelActual);
+
+        if (levelData != null)
         {
-            CompleteLevel(nivelActual, timeTaken, livesLeft);
+            // Si el nivel no está completado o si el nuevo tiempo es mejor
+            if (!levelData.completed || levelData.timeTaken > timeTaken)
+            {
+                CompleteLevel(nivelActual, timeTaken, livesLeft);
+            }
+            else
+            {
+                Debug.Log("Ya existe un mejor tiempo para este nivel");
+            }
+        }
+        else
+        {
+            Debug.LogError("No se encontró data para el nivel " + nivelActual);
         }
     }
 
