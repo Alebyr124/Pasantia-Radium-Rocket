@@ -97,3 +97,9 @@ InitTestScene*.unity*
 
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+
+
+# Ignorar librerías de Firebase pesadas
+Pacman pasantia/Assets/Firebase/Plugins/x86_64/*.bundle
+Pacman pasantia/Assets/Firebase/Plugins/x86_64/*.so
+
