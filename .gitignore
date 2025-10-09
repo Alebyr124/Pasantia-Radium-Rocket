@@ -103,3 +103,20 @@ InitTestScene*.unity*
 Pacman pasantia/Assets/Firebase/Plugins/x86_64/*.bundle
 Pacman pasantia/Assets/Firebase/Plugins/x86_64/*.so
 
+
+# Carpeta GeneratedLocalRepo
+Pacman pasantia/Assets/GeneratedLocalRepo/
+
+# StreamingAssets con credenciales
+Pacman pasantia/Assets/StreamingAssets/*.json
+
+# Archivos temporales de Unity
+Pacman pasantia/Temp/
+Pacman pasantia/Library/
+Pacman pasantia/Logs/
+Pacman pasantia/Obj/
+Pacman pasantia/Assets/GeneratedLocalRepo/
+
+# Archivos de configuración local de Firebase
+Pacman pasantia/Assets/StreamingAssets/*.json
+

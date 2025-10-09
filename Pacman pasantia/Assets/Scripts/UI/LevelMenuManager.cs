@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -15,25 +14,28 @@ public class LevelMenuScript : MonoBehaviour
 
     private void Awake()
     {
-        Leve1Button.onClick.AddListener(() =>
-        {
-            SceneManager.LoadScene(2);
-        });
+        Leve1Button.onClick.AddListener(() => SceneManager.LoadScene(2));
+        Leve2Button.onClick.AddListener(() => SceneManager.LoadScene(3));
+        BackButton.onClick.AddListener(() => SceneManager.LoadScene(0));
+    }
 
-        Leve2Button.onClick.AddListener(() =>
+    private IEnumerator Start()
+    {
+        // Esperar hasta que FirebaseSaveSystem haya cargado los datos
+        while (FirebaseSaveSystem.Instance == null || !FirebaseSaveSystem.Instance.isLoaded)
         {
-            SceneManager.LoadScene(3);
-        });
+            yield return null;
+        }
 
-        BackButton.onClick.AddListener(() =>
+        var data = FirebaseSaveSystem.Instance.gameData;
+        if (data == null)
         {
-            SceneManager.LoadScene(0);
-        });
+            Debug.LogWarning("GameData es null incluso después de cargar Firebase");
+            yield break;
+        }
 
-        //Data Partidas
-        var saveSystem = FindObjectOfType<SaveSystem>();
-        var data1 = saveSystem.GetLevelData(1);
-        var data2 = saveSystem.GetLevelData(2);
+        var data1 = data.GetLevelData(1);
+        var data2 = data.GetLevelData(2);
 
         if (data1 != null && data1.completed)
         {
@@ -44,6 +46,7 @@ public class LevelMenuScript : MonoBehaviour
         {
             Level1DataText.text = "No completado";
         }
+
         if (data2 != null && data2.completed)
         {
             System.TimeSpan time = System.TimeSpan.FromSeconds(data2.timeTaken);

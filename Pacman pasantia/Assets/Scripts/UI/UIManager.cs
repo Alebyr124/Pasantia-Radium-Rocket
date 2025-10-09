@@ -38,15 +38,14 @@ public class UIManager : MonoBehaviour
 
     // Referencias guardadas para evitar buscarlas múltiples veces
     private PlayerScript playerScript;
-    private SaveSystem saveSystem;
-
+  
     void Awake()
     {
         inst = this;
 
         // Buscar referencias al inicio
         playerScript = FindObjectOfType<PlayerScript>();
-        saveSystem = FindObjectOfType<SaveSystem>();
+    
 
         RestartButton.onClick.AddListener(() =>
         {
@@ -132,14 +131,20 @@ public class UIManager : MonoBehaviour
         Cursor.visible = true;
 
         // Guardar con verificación de nulos
-        if (saveSystem != null && playerScript != null)
+        if (playerScript != null)
         {
-            saveSystem.CompleteCurrentLevel((TimeMinutes * 60) + Mathf.Ceil(TimeSeconds), playerScript.vidas);
+            // Asumiendo que el nivel actual es 1, ajusta según tu lógica
+            int nivelActual = 1; 
+            FirebaseSaveSystem.Instance.CompleteLevel(
+                nivelActual,
+                (TimeMinutes * 60) + Mathf.Ceil(TimeSeconds),
+                playerScript.vidas
+            );
         }
+
         else
         {
             Debug.LogWarning("No se pudo guardar el progreso: " +
-                (saveSystem == null ? "SaveSystem no encontrado. " : "") +
                 (playerScript == null ? "PlayerScript no encontrado." : ""));
         }
     }

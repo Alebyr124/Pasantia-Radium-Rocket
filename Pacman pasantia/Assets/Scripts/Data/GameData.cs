@@ -13,7 +13,7 @@ public class LevelData
     {
         levelNumber = number;
         completed = false;
-        timeTaken = 999999999999999f;
+        timeTaken = float.MaxValue;
         livesLeft = 0;
     }
 }
