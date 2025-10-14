@@ -1,21 +1,22 @@
 {
   "project_info": {
-    "project_number": "161802811301",
-    "project_id": "pacmanrr-43e78",
-    "storage_bucket": "pacmanrr-43e78.firebasestorage.app"
+    "project_number": "538388724949",
+    "firebase_url": "https://pacman-pasantia-default-rtdb.firebaseio.com",
+    "project_id": "pacman-pasantia",
+    "storage_bucket": "pacman-pasantia.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:161802811301:android:081538d1332c6761dc1a4c",
+        "mobilesdk_app_id": "1:538388724949:android:796a65b1a89c1c6cc5f65c",
         "android_client_info": {
-          "package_name": "com.RadiumRocket.PacmanUnity"
+          "package_name": "com.pacman.pasantia"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCsxG0Y0PTVgCCBHEJG3aX4J00PzjLLmGU"
+          "current_key": "AIzaSyDEJMcITH799I8DPUKetCc7u-rABoNat6o"
         }
       ],
       "services": {

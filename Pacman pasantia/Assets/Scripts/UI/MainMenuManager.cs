@@ -10,6 +10,7 @@ public class MainMenuScript : MonoBehaviour
 {
     public Button PlayButton;
     public Button ExitButton;
+    public Button logoutButton;
 
     private void Awake()
     {
@@ -21,6 +22,13 @@ public class MainMenuScript : MonoBehaviour
         ExitButton.onClick.AddListener(() =>
         {
             Application.Quit();
+        });
+
+        logoutButton.onClick.AddListener(() =>
+        {
+            PlayerPrefs.DeleteKey("PlayerName");
+            PlayerPrefs.Save();
+            SceneManager.LoadScene(1);
         });
     }
 }

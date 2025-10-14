@@ -1,24 +1,31 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.IO;
+using System.Collections.Generic;
+using Firebase.Database;
+using Firebase.Extensions;
 using UnityEngine.SceneManagement;
 
 public class SaveSystem : MonoBehaviour
 {
     private string savePath;
     public GameData gameData;
-    public int totalLevels = 2; // Cambiar si agregas m�s niveles
+    public int totalLevels = 2; // Ajustá según tu juego
 
     private void Awake()
     {
+        DontDestroyOnLoad(gameObject);
         savePath = Application.persistentDataPath + "/save.json";
         LoadGame();
     }
 
+    // ------------------------------
+    // GUARDADO LOCAL
+    // ------------------------------
     public void SaveGame()
     {
         string json = JsonUtility.ToJson(gameData, true);
         File.WriteAllText(savePath, json);
-        Debug.Log("Juego guardado en: " + savePath);
+        Debug.Log("💾 Guardado local en: " + savePath);
     }
 
     public void LoadGame()
@@ -27,26 +34,33 @@ public class SaveSystem : MonoBehaviour
         {
             string json = File.ReadAllText(savePath);
             gameData = JsonUtility.FromJson<GameData>(json);
-            Debug.Log("Juego cargado correctamente");
+            Debug.Log("📂 Cargado localmente");
         }
         else
         {
             gameData = new GameData(totalLevels);
-            Debug.Log("No se encontr� guardado, creando nuevo");
-            SaveGame(); // Guarda el archivo inicial
+            Debug.Log("🆕 No se encontró guardado, creando nuevo");
         }
     }
 
-    // Guarda el progreso de un nivel espec�fico
+    // ------------------------------
+    // GUARDADO DE NIVEL
+    // ------------------------------
     public void CompleteLevel(int levelNumber, float timeTaken, int livesLeft)
     {
         LevelData level = gameData.GetLevelData(levelNumber);
         if (level != null)
         {
-            level.completed = true;
-            level.timeTaken = timeTaken;
-            level.livesLeft = livesLeft;
-            SaveGame();
+            // Si mejora el tiempo, actualizamos
+            if (level.timeTaken == 0 || timeTaken < level.timeTaken)
+            {
+                level.completed = true;
+                level.timeTaken = timeTaken;
+                level.livesLeft = livesLeft;
+
+                SaveGame();  // Guardado local
+                SaveToFirebase(levelNumber, timeTaken, livesLeft);  // Guardado online
+            }
         }
         else
         {
@@ -54,36 +68,130 @@ public class SaveSystem : MonoBehaviour
         }
     }
 
-    // Guarda autom�ticamente usando la escena actual
     public void CompleteCurrentLevel(float timeTaken, int livesLeft)
     {
-        int nivelActual = SceneManager.GetActiveScene().buildIndex - 1;
-
-        Debug.Log("Build Index: " + SceneManager.GetActiveScene().buildIndex);
-        Debug.Log("Nivel calculado: " + nivelActual);
-
-        LevelData levelData = GetLevelData(nivelActual);
-
-        if (levelData != null)
-        {
-            // Si el nivel no est� completado o si el nuevo tiempo es mejor
-            if (!levelData.completed || levelData.timeTaken > timeTaken)
-            {
-                CompleteLevel(nivelActual, timeTaken, livesLeft);
-            }
-            else
-            {
-                Debug.Log("Ya existe un mejor tiempo para este nivel");
-            }
-        }
-        else
-        {
-            Debug.LogError("No se encontr� data para el nivel " + nivelActual);
-        }
+        int nivelActual = SceneManager.GetActiveScene().buildIndex - 2;
+        CompleteLevel(nivelActual, timeTaken, livesLeft);
     }
 
     public LevelData GetLevelData(int levelNumber)
     {
         return gameData.GetLevelData(levelNumber);
     }
+
+    // ------------------------------
+    // GUARDADO EN FIREBASE
+    // ------------------------------
+    private void SaveToFirebase(int levelNumber, float timeTaken, int livesLeft)
+    {
+        if (FirebaseInit.DBreference == null)
+        {
+            Debug.LogWarning("⚠️ Firebase no inicializado. Solo se guardó localmente.");
+            return;
+        }
+
+        string playerId = PlayerPrefs.GetString("PlayerName", "JugadorDesconocido");
+        string levelName = "Level" + levelNumber;
+
+        Dictionary<string, object> data = new Dictionary<string, object>();
+        data["levelNumber"] = levelNumber;
+        data["timeTaken"] = timeTaken;
+        data["livesLeft"] = livesLeft;
+        data["timestamp"] = System.DateTime.UtcNow.ToString("o");
+
+        FirebaseInit.DBreference
+            .Child("saves")
+            .Child(playerId)
+            .Child(levelName)
+            .SetValueAsync(data)
+            .ContinueWithOnMainThread(task =>
+            {
+                if (task.IsCompleted)
+                {
+                    Debug.Log($"☁️ Guardado en Firebase: {levelName} ({timeTaken}s, {livesLeft} vidas)");
+                }
+                else
+                {
+                    Debug.LogError($"❌ Error al guardar en Firebase: {task.Exception}");
+                }
+            });
+    }
+
+    // ------------------------------
+    // CARGA DESDE FIREBASE
+    // ------------------------------
+    public void LoadFromFirebase(int levelNumber, System.Action<LevelData> onLoaded)
+    {
+        if (FirebaseInit.DBreference == null)
+        {
+            Debug.LogWarning("⚠️ Firebase no inicializado.");
+            onLoaded?.Invoke(null);
+            return;
+        }
+
+        string playerId = PlayerPrefs.GetString("PlayerName", "JugadorDesconocido");
+        string levelName = "Level" + levelNumber;
+
+        FirebaseInit.DBreference
+            .Child("saves")
+            .Child(playerId)
+            .Child(levelName)
+            .GetValueAsync()
+            .ContinueWithOnMainThread(task =>
+            {
+                if (task.IsFaulted)
+                {
+                    Debug.LogError("Error al cargar desde Firebase: " + task.Exception);
+                    onLoaded?.Invoke(null);
+                    return;
+                }
+
+                DataSnapshot snap = task.Result;
+                if (snap.Exists)
+                {
+                    LevelData data = new LevelData(levelNumber);
+                    data.completed = true;
+                    data.timeTaken = float.Parse(snap.Child("timeTaken").Value.ToString());
+                    data.livesLeft = int.Parse(snap.Child("livesLeft").Value.ToString());
+
+                    Debug.Log($"✅ Cargado de Firebase: Nivel {levelNumber} - {data.timeTaken}s - {data.livesLeft} vidas");
+                    onLoaded?.Invoke(data);
+                }
+                else
+                {
+                    Debug.Log($"⚠️ No se encontró nivel {levelNumber} en Firebase");
+                    onLoaded?.Invoke(null);
+                }
+            });
+    }
+
+    public void LoadScoreboard(int levelNumber, System.Action<List<(string playerName, float time)>> onLoaded)
+    {
+        FirebaseInit.DBreference
+            .Child("saves")
+            .GetValueAsync()
+            .ContinueWithOnMainThread(task =>
+            {
+                List<(string, float)> scores = new();
+
+                if (task.IsCompleted)
+                {
+                    foreach (var playerSnap in task.Result.Children)
+                    {
+                        var levelSnap = playerSnap.Child("Level" + levelNumber);
+                        if (levelSnap.Exists && levelSnap.Child("timeTaken").Value != null)
+                        {
+                            string playerName = playerSnap.Key;
+                            float time = float.Parse(levelSnap.Child("timeTaken").Value.ToString());
+                            scores.Add((playerName, time));
+                        }
+                    }
+
+                    // Ordenar de menor a mayor tiempo
+                    scores.Sort((a, b) => a.Item2.CompareTo(b.Item2));
+                    onLoaded?.Invoke(scores);
+                }
+            });
+    }
+
 }

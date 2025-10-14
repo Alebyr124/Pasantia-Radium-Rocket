@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -6,55 +5,63 @@ using TMPro;
 
 public class LevelMenuScript : MonoBehaviour
 {
-    public Button Leve1Button;
-    public Button Leve2Button;
+    public Button Level1Button;
+    public Button Level2Button;
     public Button BackButton;
     public TextMeshProUGUI Level1DataText;
     public TextMeshProUGUI Level2DataText;
+    public TextMeshProUGUI UsernameText; // <-- Nuevo: mostrar nombre
 
     private void Awake()
     {
-        Leve1Button.onClick.AddListener(() => SceneManager.LoadScene(2));
-        Leve2Button.onClick.AddListener(() => SceneManager.LoadScene(3));
-        BackButton.onClick.AddListener(() => SceneManager.LoadScene(0));
-    }
+        Level1Button.onClick.AddListener(() =>
+        {
+            SceneManager.LoadScene(3);
+        });
 
-    private IEnumerator Start()
-    {
-        // Esperar hasta que FirebaseSaveSystem haya cargado los datos
-        while (FirebaseSaveSystem.Instance == null || !FirebaseSaveSystem.Instance.isLoaded)
+        Level2Button.onClick.AddListener(() =>
         {
-            yield return null;
-        }
+            SceneManager.LoadScene(4);
+        });
 
-        var data = FirebaseSaveSystem.Instance.gameData;
-        if (data == null)
+        BackButton.onClick.AddListener(() =>
         {
-            Debug.LogWarning("GameData es null incluso después de cargar Firebase");
-            yield break;
-        }
+            SceneManager.LoadScene(0);
+        });
 
-        var data1 = data.GetLevelData(1);
-        var data2 = data.GetLevelData(2);
+        // ---------- Mostrar nombre de usuario ----------
+        string playerName = PlayerPrefs.GetString("PlayerName", "JugadorDesconocido");
+        UsernameText.text = $"Logueado como: {playerName}";
 
-        if (data1 != null && data1.completed)
-        {
-            System.TimeSpan time = System.TimeSpan.FromSeconds(data1.timeTaken);
-            Level1DataText.text = $"Completado\nTiempo: {time.Minutes:D2}:{time.Seconds:D2}";
-        }
-        else
-        {
-            Level1DataText.text = "No completado";
-        }
+        // ---------- Cargar datos desde Firebase ----------
+        var saveSystem = FindObjectOfType<SaveSystem>();
 
-        if (data2 != null && data2.completed)
+        // Nivel 1
+        saveSystem.LoadFromFirebase(1, (data1) =>
         {
-            System.TimeSpan time = System.TimeSpan.FromSeconds(data2.timeTaken);
-            Level2DataText.text = $"Completado\nTiempo: {time.Minutes:D2}:{time.Seconds:D2}";
-        }
-        else
+            if (data1 != null && data1.completed)
+            {
+                System.TimeSpan time = System.TimeSpan.FromSeconds(data1.timeTaken);
+                Level1DataText.text = $"Completado\nTiempo: {time.Minutes:D2}:{time.Seconds:D2}";
+            }
+            else
+            {
+                Level1DataText.text = "No completado";
+            }
+        });
+
+        // Nivel 2
+        saveSystem.LoadFromFirebase(2, (data2) =>
         {
-            Level2DataText.text = "No completado";
-        }
+            if (data2 != null && data2.completed)
+            {
+                System.TimeSpan time = System.TimeSpan.FromSeconds(data2.timeTaken);
+                Level2DataText.text = $"Completado\nTiempo: {time.Minutes:D2}:{time.Seconds:D2}";
+            }
+            else
+            {
+                Level2DataText.text = "No completado";
+            }
+        });
     }
 }
