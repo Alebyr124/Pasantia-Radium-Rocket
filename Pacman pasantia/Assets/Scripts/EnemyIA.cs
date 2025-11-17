@@ -4,32 +4,32 @@ using UnityEngine.AI;
 public class EnemyIA : MonoBehaviour
 {
     public enum EnemyState { Patrol, Chase }
-    private EnemyState currentState = EnemyState.Patrol;
+    public EnemyState currentState = EnemyState.Patrol;
 
     [Header("NavMesh")]
     public NavMeshAgent agent;
     public Transform[] destinations;
-    private int currentDestination = 0;
+    public int currentDestination = 0;
 
     [Header("Player")]
-    private GameObject player;
+    public GameObject player;
     public float followDistance = 8f;
 
     [Header("Patrulla")]
     public float destinationDistance = 3f;
 
-    private void Awake()
+    public void Awake()
     {
         player = FindObjectOfType<PlayerScript>().gameObject;
     }
 
-    private void Start()
+    public void Start()
     {
         if (destinations.Length > 0)
             agent.SetDestination(destinations[0].position);
     }
 
-    private void Update()
+    public void Update()
     {
         if (!UIManager.inst.Pause && !UIManager.inst.Win)
         {
@@ -50,7 +50,7 @@ public class EnemyIA : MonoBehaviour
         }
     }
 
-    private void Patrol()
+    public void Patrol()
     {
         if (destinations.Length == 0) return;
 
@@ -61,7 +61,7 @@ public class EnemyIA : MonoBehaviour
         }
     }
 
-    private void Chase()
+    public void Chase()
     {
         if (Vector3.Distance(agent.destination, player.transform.position) > 1f)
         {
@@ -69,12 +69,12 @@ public class EnemyIA : MonoBehaviour
         }
     }
 
-    private bool PlayerInRange()
+    public bool PlayerInRange()
     {
         return Vector3.Distance(agent.transform.position, player.transform.position) < followDistance;
     }
 
-    private void OnDrawGizmosSelected()
+    public void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, followDistance);

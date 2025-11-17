@@ -21,7 +21,7 @@ public class PlayerScript : MonoBehaviour
     private float rotationX;
     private Rigidbody rb;
     public Transform spawnPoint;
-    private UIManager uiManager;
+    public UIManager uiManager;
 
     [Header("Audio")]
     public AudioSource PildoraSound;
@@ -33,10 +33,10 @@ public class PlayerScript : MonoBehaviour
 
     [Header("Mobile Controls")]
     public FixedJoystick joystick;
-    private bool isMobile;
+    public bool isMobile;
     private int cameraFingerId = -1;
 
-    void Start()
+   public void Start()
     {
         rb = GetComponent<Rigidbody>();
 
@@ -73,7 +73,7 @@ public class PlayerScript : MonoBehaviour
         Debug.Log("Plataforma detectada como móvil: " + isMobile);
     }
 
-    private bool DetectMobilePlatform()
+    public bool DetectMobilePlatform()
     {
         // Para builds nativos de Android/iOS
         if (Application.platform == RuntimePlatform.Android ||
@@ -93,7 +93,7 @@ public class PlayerScript : MonoBehaviour
 #endif
     }
 
-    void Update()
+    public void Update()
     {
         if (!uiManager.Win && !uiManager.Pause)
         {
@@ -128,7 +128,7 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
+    public void FixedUpdate()
     {
         if (!uiManager.Win && !uiManager.Pause)
         {
@@ -151,7 +151,7 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    void HandleTouchCamera()
+    public void HandleTouchCamera()
     {
         for (int i = 0; i < Input.touchCount; i++)
         {
@@ -181,7 +181,7 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    private bool IsPointerOverUIObject(int fingerId)
+    public bool IsPointerOverUIObject(int fingerId)
     {
         PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
         eventDataCurrentPosition.position = Input.GetTouch(fingerId).position;
@@ -192,7 +192,7 @@ public class PlayerScript : MonoBehaviour
         return results.Count > 0;
     }
 
-    void OnCollisionEnter(Collision collision)
+    public void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Pildora"))
         {
@@ -236,7 +236,7 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    private IEnumerator DamageCooldown()
+    public IEnumerator DamageCooldown()
     {
         yield return new WaitForSeconds(damageCooldown);
         canTakeDamage = true;

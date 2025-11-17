@@ -39,7 +39,7 @@ public class UIManager : MonoBehaviour
     // Referencias guardadas para evitar buscarlas múltiples veces
     private PlayerScript playerScript;
   
-    void Awake()
+    public void Awake()
     {
         inst = this;
 
